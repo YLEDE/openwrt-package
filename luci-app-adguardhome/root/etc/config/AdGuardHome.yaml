@@ -3,11 +3,12 @@ bind_port: 3000
 beta_bind_port: 0
 users:
 - name: admin
-  password: $2a$10$sUDUtoao8CCNtM4KB2ppXuxT0QBUWXus48nj2QT60Cutau4Zh5rha
+  password: $2a$10$05CD4lWqqlXwwr.wmwJaD.lNHJYAUWCmiIBcn9V/CWkzIEDZmNYdm
 auth_attempts: 5
 block_auth_min: 15
 http_proxy: ""
 language: ""
+rlimit_nofile: 0
 debug_pprof: false
 web_session_ttl: 720
 dns:
@@ -17,7 +18,7 @@ dns:
   statistics_interval: 1
   querylog_enabled: true
   querylog_file_enabled: true
-  querylog_interval: 24h
+  querylog_interval: 1
   querylog_size_memory: 1000
   anonymize_client_ip: false
   protection_enabled: true
@@ -40,24 +41,18 @@ dns:
   upstream_dns_file: ""
   bootstrap_dns:
   - 223.5.5.5
-  - 114.114.114.114
-  - 8.8.8.8
+  - 114.114.114.14
   all_servers: false
   fastest_addr: false
-  fastest_timeout: 1s
   allowed_clients: []
   disallowed_clients: []
   blocked_hosts:
   - version.bind
   - id.server
   - hostname.bind
-  trusted_proxies:
-  - 127.0.0.0/8
-  - ::1/128
   cache_size: 4194304
   cache_ttl_min: 0
   cache_ttl_max: 0
-  cache_optimistic: false
   bogus_nxdomain: []
   aaaa_disabled: false
   enable_dnssec: false
@@ -75,9 +70,8 @@ dns:
   cache_time: 30
   rewrites: []
   blocked_services: []
-  upstream_timeout: 10s
+  local_domain_name: lan
   resolve_clients: true
-  use_private_ptr_resolvers: true
   local_ptr_upstreams: []
 tls:
   enabled: false
@@ -99,7 +93,7 @@ filters:
   url: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
   name: AdGuard DNS filter
   id: 1
-- enabled: false
+- enabled: true
   url: https://adaway.org/hosts.txt
   name: AdAway Default Blocklist
   id: 2
@@ -116,10 +110,6 @@ filters:
   name: anti-AD命中率最高列表
   id: 1648615179
 - enabled: true
-  url: https://gitee.com/halflife/list/raw/master/ad.txt
-  name: halflife合并乘风
-  id: 1648615180
-- enabled: true
   url: https://raw.githubusercontent.com/BlueSkyXN/AdGuardHomeRules/master/all.txt
   name: 百万ADH广告拦截过滤规则
   id: 1648615183
@@ -135,7 +125,6 @@ user_rules:
 dhcp:
   enabled: false
   interface_name: ""
-  local_domain_name: lan
   dhcpv4:
     gateway_ip: ""
     subnet_mask: ""
@@ -157,8 +146,4 @@ log_max_size: 100
 log_max_age: 3
 log_file: ""
 verbose: false
-os:
-  group: ""
-  user: ""
-  rlimit_nofile: 0
-schema_version: 13
+schema_version: 10
