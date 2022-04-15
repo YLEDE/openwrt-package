@@ -15,7 +15,6 @@ BACKUP_LIST='./etc/AdGuardHome.yaml \
 ./etc/adblocklist/ \
 ./etc/amule/ \
 ./etc/balance_irq \
-./etc/bluetooth/ \
 ./etc/china_ssr.txt \
 ./etc/cifs/cifsdpwd.db \
 ./etc/smbd/smbdpwd.db \
@@ -69,7 +68,6 @@ BACKUP_LIST='./etc/AdGuardHome.yaml \
 ./etc/uhttpd.crt \
 ./etc/uhttpd.key \
 ./etc/urandom.seed \
-./etc/v2raya/ \
 ./etc/verysync/ \
 ./root/.ssh/'
 

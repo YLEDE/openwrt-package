@@ -38,7 +38,6 @@ void check_appfilter_enable(void)
     time_t tt;
     time(&tt);
     enable = config_get_appfilter_enable();
-
     if (0 == enable)
         goto EXIT;
     af_t = load_appfilter_ctl_time_config();
@@ -47,14 +46,13 @@ void check_appfilter_enable(void)
         enable = 0;
         goto EXIT;
     }
-    
+
     t = localtime(&tt);
     if (af_t->days[t->tm_wday] != 1)
     {
         enable = 0;
         goto EXIT;
     }
-        
     if (af_t->start.hour <= af_t->end.hour)
     {
         int cur_mins = t->tm_hour * 60 + t->tm_min;
@@ -66,7 +64,6 @@ void check_appfilter_enable(void)
     else
         enable = 0;
 EXIT:
-    
     if (enable)
     {
         system("echo 1 >/proc/sys/oaf/enable ");
@@ -79,8 +76,8 @@ EXIT:
 
 void dev_list_timeout_handler(struct uloop_timeout *t)
 {
-    
     dump_dev_list();
+    
     check_dev_visit_info_expire();
     flush_expire_visit_info();
     //dump_dev_visit_list();
@@ -114,6 +111,7 @@ int main(int argc, char **argv)
     uloop_fd_add(&appfilter_nl_fd, ULOOP_READ);
     af_msg_t msg;
     msg.action = AF_MSG_INIT;
+
     send_msg_to_kernel(appfilter_nl_fd.fd, (void *)&msg, sizeof(msg));
     uloop_timeout_set(&dev_tm, 5000);
     uloop_timeout_add(&dev_tm);

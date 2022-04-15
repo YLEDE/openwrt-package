@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: https://github.com/ophub/luci-app-amlogic \n"
+"Last-Translator: https://github.com/ophub/amlogic-s9xxx-openwrt \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -102,7 +102,7 @@ msgid "[s905d] Phicomm N1"
 msgstr "[s905d] 斐讯-N1"
 
 msgid "[s905d] Phicomm N1 (DMA thresh)"
-msgstr "[s905d] 斐讯-N1 (流控)"
+msgstr "[s905d] 斐讯-N1 (DMA thresh)"
 
 msgid "[s905x] HG680P & B860H"
 msgstr "[s905x] 烽火HG680 & 中兴B860H"
@@ -149,32 +149,20 @@ msgstr "[s905x3] X96 Max+ (超频@2208Mhz)"
 msgid "[s905x3] HK1 Box"
 msgstr "[s905x3] HK1 Box"
 
-msgid "[s905x3] HK1 Box (OverClock@2208Mhz)"
+msgid "[s905x3] HK1 Box (OveClock@2208Mhz)"
 msgstr "[s905x3] HK1 Box (超频@2208Mhz)"
 
 msgid "[s905x3] H96 Max X3"
 msgstr "[s905x3] H96 Max X3"
 
-msgid "[s905x3] H96 Max X3 (OverClock@2208Mhz)"
+msgid "[s905x3] H96 Max X3 (OveClock@2208Mhz)"
 msgstr "[s905x3] H96 Max X3 (超频@2208Mhz)"
 
 msgid "[s905x3] Ugoos X3"
 msgstr "[s905x3] Ugoos X3"
 
-msgid "[s905x3] Ugoos X3 (OverClock@2208Mhz)"
+msgid "[s905x3] Ugoos X3 (OveClock@2208Mhz)"
 msgstr "[s905x3] Ugoos X3 (超频@2208Mhz)"
-
-msgid "[s905x3] TX3 BZ"
-msgstr "[s905x3] TX3 百兆"
-
-msgid "[s905x3] TX3 BZ (OverClock@2208Mhz)"
-msgstr "[s905x3] TX3 百兆 (超频@2208Mhz)"
-
-msgid "[s905x3] TX3 QZ"
-msgstr "[s905x3] TX3 千兆"
-
-msgid "[s905x3] TX3 QZ (OverClock@2208Mhz)"
-msgstr "[s905x3] TX3 千兆 (超频@2208Mhz)"
 
 msgid "Or enter the dtb file name:"
 msgstr "或者输入自定义 dtb 文件名："
@@ -248,11 +236,11 @@ msgstr "支持将 OpenWrt 系统写入 EMMC、升级固件与内核，备份与�
 msgid "Supported Boxes:"
 msgstr "支持的盒子："
 
-msgid "Amlogic s922x --- [ Belink, Belink-Pro, Ugoos-AM6-Plus, ODROID-N2, Khadas VIM3(a311d) ]"
-msgstr "晶晨 s922x --- [ Belink, Belink-Pro, Ugoos-AM6-Plus, ODROID-N2, Khadas VIM3(a311d) ]"
+msgid "Amlogic s922x --- [ Belink, Belink-Pro, Ugoos-AM6-Plus, ODROID-N2 ]"
+msgstr "晶晨 s922x --- [ Belink, Belink-Pro, Ugoos-AM6-Plus, ODROID-N2 ]"
 
-msgid "Amlogic s905x3 -- [ X96-Max+, HK1-Box, H96-Max-X3, Ugoos-X3, TX3, X96-Air, A95XF3-Air ]"
-msgstr "晶晨 s905x3 -- [ X96-Max+, HK1-Box, H96-Max-X3, Ugoos-X3, TX3, X96-Air, A95XF3-Air ]"
+msgid "Amlogic s905x3 -- [ X96-Max+, HK1-Box, H96-Max-X3, Ugoos-X3, X96-Air, A95XF3-Air ]"
+msgstr "晶晨 s905x3 -- [ X96-Max+, HK1-Box, H96-Max-X3, Ugoos-X3, X96-Air, A95XF3-Air ]"
 
 msgid "Amlogic s905x2 -- [ X96Max-4G, X96Max-2G ]"
 msgstr "晶晨 s905x2 -- [ X96Max-4G, X96Max-2G ]"
@@ -547,29 +535,4 @@ msgstr "CPU 检查切换的周期 (ms) 。注意：过于频繁的切换频率�
 
 msgid "Microarchitectures:"
 msgstr "微架构："
-
-msgid "Loading"
-msgstr "载入中"
-
-msgid "PowerOff"
-msgstr "关机"
-
-msgid "Shut down your router device."
-msgstr "关闭你的路由器设备。"
-
-msgid "Perform PowerOff"
-msgstr "执行关机"
-
-msgid "Are you sure you want to shut down?"
-msgstr "你确定要关机吗？"
-
-msgid "Device is shutting down..."
-msgstr "设备正在关机..."
-
-msgid "Waiting for the device to shut down..."
-msgstr "等待设备关机..."
-
-msgid "The device has been turned off"
-msgstr "设备已经关机"
-
 

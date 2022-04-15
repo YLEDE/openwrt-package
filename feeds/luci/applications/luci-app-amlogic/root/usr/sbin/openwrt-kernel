@@ -47,7 +47,8 @@ fi
 # Find the partition where root is located
 ROOT_PTNAME=$(df / | tail -n1 | awk '{print $1}' | awk -F '/' '{print $3}')
 if [ "${ROOT_PTNAME}" == "" ]; then
-    error_msg "Cannot find the partition corresponding to the root file system!"
+    echo "Cannot find the partition corresponding to the root file system!"
+    exit 1
 fi
 
 # Find the disk where the partition is located, only supports mmcblk?p? sd?? hd?? vd?? and other formats
@@ -63,47 +64,13 @@ mmcblk?p[1-4])
     LB_PRE=""
     ;;
 *)
-    error_msg "Unable to recognize the disk type of ${ROOT_PTNAME}!"
+    echo "Unable to recognize the disk type of ${ROOT_PTNAME}!"
+    exit 1
     ;;
 esac
 
 echo -e "Current device: ${MYDEVICE_NAME} [ ${MYDTB_FILE} ], Use in [ ${EMMC_NAME} ]"
 sleep 3
-
-function get_k510_from_vmlinuz() {
-    local vmlinuz=$1
-    local temp_script=$(mktemp)
-    cat >$temp_script <<EOF
-use strict;
-my \$filename = \$ARGV[0];
-open my \$fh, '<', \$filename or die;
-binmode \$fh;
-seek \$fh, 0x8, 0;
-my \$buf = "";
-read \$fh, \$buf, 0x4;
-close(\$fh);
-my \$str = unpack 'H*', \$buf;
-print "\$str\n";
-EOF
-    local result=1
-    local text_offset=$(perl "$temp_script" "$vmlinuz")
-    [ "$text_offset" == "00000801" ] && result=0
-    rm -f $temp_script
-    echo "$result"
-}
-
-function get_k510_from_boot_tgz() {
-    local boot_tgz=$1
-    local vmlinuz=$2
-    local temp_dir=$(mktemp -d)
-    (
-        cd $temp_dir
-        tar xzf "$boot_tgz" "$vmlinuz"
-    )
-    local result=$(get_k510_from_vmlinuz "${temp_dir}/${vmlinuz}")
-    rm -rf $temp_dir
-    echo "$result"
-}
 
 P4_PATH="/mnt/${EMMC_NAME}${PARTITION_NAME}4"
 
@@ -113,10 +80,24 @@ mv -f /tmp/upload/* ${P4_PATH}/ 2>/dev/null && sync
 if [ $(ls ${P4_PATH}/*.tar.gz -l 2>/dev/null | grep "^-" | wc -l) -ge 3 ]; then
 
     if [ $(ls ${P4_PATH}/boot-*.tar.gz -l 2>/dev/null | grep "^-" | wc -l) -ge 1 ]; then
-        build_boot_abs=$(ls ${P4_PATH}/boot-*.tar.gz | head -n 1) && build_boot=${build_boot_abs##*/}
+        build_boot=$(ls ${P4_PATH}/boot-*.tar.gz | head -n 1) && build_boot=${build_boot##*/}
         echo -e "Update using [ ${build_boot} ] files. Please wait a moment ..."
         flippy_version=${build_boot/boot-/} && flippy_version=${flippy_version/.tar.gz/}
-        K510=$(get_k510_from_boot_tgz "${build_boot_abs}" "vmlinuz-${flippy_version}")
+        kernel_version=$(echo ${flippy_version} | grep -oE '^[1-9].[0-9]{1,3}.[0-9]+')
+        kernel_vermaj=$(echo ${kernel_version} | grep -oE '^[1-9].[0-9]{1,3}')
+        k510_ver=${kernel_vermaj%%.*}
+        k510_maj=${kernel_vermaj##*.}
+        if [ ${k510_ver} -eq "5" ]; then
+            if [ "${k510_maj}" -ge "10" ]; then
+                K510=1
+            else
+                K510=0
+            fi
+        elif [ ${k510_ver} -gt "5" ]; then
+            K510=1
+        else
+            K510=0
+        fi
     else
         error_msg "Have no boot-*.tar.gz file found in the ${P4_PATH} directory."
     fi
@@ -138,15 +119,36 @@ if [ $(ls ${P4_PATH}/*.tar.gz -l 2>/dev/null | grep "^-" | wc -l) -ge 3 ]; then
     build_boot: ${build_boot} \n \
     build_dtb: ${build_dtb} \n \
     build_modules: ${build_modules} \n \
-    kernel_version: ${flippy_version} \n \
+    flippy_version: ${flippy_version} \n \
+    kernel_version: ${kernel_version} \n \
     K510: ${K510}"
 
 else
-    error_msg "After upload the kernel files in [ /mnt/${EMMC_NAME}${PARTITION_NAME}4/ ], run again."
+    echo -e "Please upload the kernel files."
+    echo -e "Upload method: system menu → Amlogic Service → Manually Upload Update"
+    echo -e "Specify method: Place the kernel file in [ /mnt/${EMMC_NAME}${PARTITION_NAME}4/ ]"
+    echo -e "After upload the kernel file, run again."
+    exit 1
+fi
+
+MODULES_OLD=$(ls /lib/modules/ 2>/dev/null)
+VERSION_OLD=$(echo ${MODULES_OLD} | grep -oE '^[1-9].[0-9]{1,3}' 2>/dev/null)
+VERSION_ver=${VERSION_OLD%%.*}
+VERSION_maj=${VERSION_OLD##*.}
+if [ ${VERSION_ver} -eq "5" ]; then
+    if [ "${VERSION_maj}" -ge "10" ]; then
+        V510=1
+    else
+        V510=0
+    fi
+elif [ ${VERSION_ver} -gt "5" ]; then
+    V510=1
+else
+    V510=0
 fi
 
 # Check version consistency from amlogic s9xxx
-if [[ "${K510}" -eq "1" && "${MYDTB_FILE}" == "amlogic" ]]; then
+if [[ "${V510}" -lt "${K510}" && "${MYDTB_FILE}" == "amlogic" ]]; then
     echo -e "Update to kernel 5.10 or higher and install U-BOOT."
     if [ -f "/etc/flippy-openwrt-release" ]; then
         # U-BOOT adaptation
@@ -157,7 +159,8 @@ if [[ "${K510}" -eq "1" && "${MYDTB_FILE}" == "amlogic" ]]; then
         # Check ${UBOOT_OVERLOAD}
         if [[ -n "${UBOOT_OVERLOAD}" ]]; then
             if [[ ! -f "/boot/${UBOOT_OVERLOAD}" ]]; then
-                error_msg "The [ ${UBOOT_OVERLOAD} ] file is missing, please complete it first."
+                echo -e "The [ ${UBOOT_OVERLOAD} ] file is missing, please complete it first."
+                exit 1
             else
                 echo -e "The ${UBOOT_OVERLOAD} file has been found."
             fi
@@ -168,7 +171,8 @@ if [[ "${K510}" -eq "1" && "${MYDTB_FILE}" == "amlogic" ]]; then
         # Check ${MAINLINE_UBOOT}
         if [[ -n "${MAINLINE_UBOOT}" && "${AUTO_MAINLINE_UBOOT}" == "yes" ]]; then
             if [[ ! -f "/lib/u-boot/${MAINLINE_UBOOT}" ]]; then
-                error_msg "The [ ${MAINLINE_UBOOT} ] file is missing, please complete it first."
+                echo -e "The [ ${MAINLINE_UBOOT} ] file is missing, please complete it first."
+                exit 1
             fi
         fi
     else
@@ -191,9 +195,6 @@ if [[ "${K510}" -eq "1" && "${MYDTB_FILE}" == "amlogic" ]]; then
         dd if=/lib/u-boot/${MAINLINE_UBOOT} of=/dev/${EMMC_NAME} bs=512 skip=1 seek=1 conv=fsync
         echo -e "The MAINLINE_UBOOT file write is complete."
     fi
-elif [[ "${K510}" -eq "0" && "${MYDTB_FILE}" == "amlogic" ]]; then
-    rm -f /boot/u-boot.ext 2>/dev/null
-    rm -f /boot/u-boot.emmc 2>/dev/null
 fi
 
 echo -e "Unpack [ ${flippy_version} ] related files ..."
@@ -276,11 +277,11 @@ fi
 echo -e "03. Unpack [ ${build_modules} ] complete."
 sleep 3
 
-rm -rf ${P4_PATH}/dtb-*.tar.gz ${P4_PATH}/boot-*.tar.gz ${P4_PATH}/modules-*.tar.gz ${P4_PATH}/header-*.tar.gz 2>/dev/null
+rm -rf ${P4_PATH}/dtb-*.tar.gz ${P4_PATH}/boot-*.tar.gz ${P4_PATH}/modules-*.tar.gz 2>/dev/null
 sync
 
 sed -i '/KERNEL_VERSION/d' /etc/flippy-openwrt-release 2>/dev/null
-echo "KERNEL_VERSION='${flippy_version}'" >>/etc/flippy-openwrt-release 2>/dev/null
+echo "KERNEL_VERSION='${kernel_version}'" >>/etc/flippy-openwrt-release 2>/dev/null
 
 sed -i '/K510/d' /etc/flippy-openwrt-release 2>/dev/null
 echo "K510='${K510}'" >>/etc/flippy-openwrt-release 2>/dev/null

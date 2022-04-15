@@ -236,7 +236,6 @@ end
 -- 刷新检测文件
 
 function refresh_data()
-    local uci = luci.model.uci.cursor()
     local set = luci.http.formvalue('set')
     local icount = 0
 
@@ -262,8 +261,7 @@ function refresh_data()
             retstring = '-1'
         end
     elseif set == 'ip_data' then
-        local ip_data_url = uci:get("vssr","@socks5_proxy[0]","ip_data_url")        
-        refresh_cmd = "wget-ssl -O- '" .. ip_data_url .. "' > /tmp/china_ssr.txt 2>/dev/null"
+        refresh_cmd = "wget-ssl -O- 'https://ispip.clang.cn/all_cn.txt' > /tmp/china_ssr.txt 2>/dev/null"
         sret = luci.sys.call(refresh_cmd)
         icount = luci.sys.exec('cat /tmp/china_ssr.txt | wc -l')
         if sret == 0 and tonumber(icount) > 1000 then
