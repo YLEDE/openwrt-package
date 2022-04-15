@@ -24,11 +24,15 @@
 				<option value="51"><%:[s905x3] X96 Max+%></option>
 				<option value="52"><%:[s905x3] X96 Max+ (OverClock@2208Mhz)%></option>
 				<option value="53"><%:[s905x3] HK1 Box%></option>
-				<option value="54"><%:[s905x3] HK1 Box (OveClock@2208Mhz)%></option>
+				<option value="54"><%:[s905x3] HK1 Box (OverClock@2208Mhz)%></option>
 				<option value="55"><%:[s905x3] H96 Max X3%></option>
-				<option value="56"><%:[s905x3] H96 Max X3 (OveClock@2208Mhz)%></option>
+				<option value="56"><%:[s905x3] H96 Max X3 (OverClock@2208Mhz)%></option>
 				<option value="57"><%:[s905x3] Ugoos X3%></option>
-				<option value="58"><%:[s905x3] Ugoos X3 (OveClock@2208Mhz)%></option>
+				<option value="58"><%:[s905x3] Ugoos X3 (OverClock@2208Mhz)%></option>
+				<option value="59"><%:[s905x3] TX3 BZ%></option>
+				<option value="5a"><%:[s905x3] TX3 BZ (OverClock@2208Mhz)%></option>
+				<option value="5b"><%:[s905x3] TX3 QZ%></option>
+				<option value="5c"><%:[s905x3] TX3 QZ (OverClock@2208Mhz)%></option>
 				<option value="99"><%:Enter the dtb file name%></option>
 				</select>
 			</td>
@@ -73,7 +77,7 @@
 		btn.disabled = true;
 		btn.value    = '<%:Installing...%> ';
 
-		XHR.get('<%=luci.dispatcher.build_url("admin", "system", "amlogic","start_amlogic_install")%>',
+		XHR.get('<%=luci.dispatcher.build_url("admin", "system", "amlogic", "start_amlogic_install")%>',
 			{
 				amlogic_install_sel: amlogic_soc_value + '@' + amlogic_dtb_value
 			},

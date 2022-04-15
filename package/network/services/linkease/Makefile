@@ -11,10 +11,10 @@ PKG_ARCH_LINKEASE:=$(ARCH)
 
 PKG_NAME:=linkease
 PKG_VERSION:=0.7.0
-PKG_RELEASE:=9
+PKG_RELEASE:=1
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://fw.koolcenter.com/binary/LinkEase/LinuxStorage/
-PKG_HASH:=skip
+PKG_HASH:=26ebbb22d78fd2ceb009226a0d85a40f100d502595b59c8a43eea5e4394ee292
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 
@@ -28,7 +28,7 @@ define Package/$(PKG_NAME)
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=LinkEase - the file cloud
-	DEPENDS:=
+	DEPENDS:=@(arm||x86_64||aarch64)
 	URL:=https://www.ddnsto.com/linkease/
 endef
 

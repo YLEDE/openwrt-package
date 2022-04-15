@@ -14,9 +14,10 @@ function index()
 	entry({"admin", "system", "amlogic", "upload"}, cbi("amlogic/amlogic_upload"), _("Manually Upload Update"), 3).leaf = true
 	entry({"admin", "system", "amlogic", "check"}, cbi("amlogic/amlogic_check"), _("Online Download Update"), 4).leaf = true
 	entry({"admin", "system", "amlogic", "backup"}, cbi("amlogic/amlogic_backup"), _("Backup Firmware Config"), 5).leaf = true
-	entry({"admin", "system", "amlogic", "config"}, cbi("amlogic/amlogic_config"), _("Plugin Settings"), 6).leaf = true
-	entry({"admin", "system", "amlogic", "armcpu"}, cbi("amlogic/amlogic_armcpu"), _("CPU Settings"), 7).leaf = true
+	entry({"admin", "system", "amlogic", "armcpu"}, cbi("amlogic/amlogic_armcpu"), _("CPU Settings"), 6).leaf = true
+	entry({"admin", "system", "amlogic", "config"}, cbi("amlogic/amlogic_config"), _("Plugin Settings"), 7).leaf = true
 	entry({"admin", "system", "amlogic", "log"}, cbi("amlogic/amlogic_log"), _("Server Logs"), 8).leaf = true
+	entry({"admin", "system", "amlogic", "poweroff"}, cbi("amlogic/amlogic_poweroff"), _("PowerOff"), 9).leaf = true
 	entry({"admin", "system", "amlogic", "check_firmware"}, call("action_check_firmware"))
 	entry({"admin", "system", "amlogic", "check_plugin"}, call("action_check_plugin"))
 	entry({"admin", "system", "amlogic", "check_kernel"}, call("action_check_kernel"))
@@ -37,6 +38,7 @@ function index()
 	entry({"admin", "system", "amlogic", "start_snapshot_list"}, call("action_check_snapshot")).leaf = true
 	entry({"admin", "system", "amlogic", "start_openwrt_author"}, call("action_openwrt_author")).leaf = true
 	entry({"admin", "system", "amlogic", "state"}, call("action_state")).leaf = true
+	entry({"admin", "system", "amlogic", "start_poweroff"}, call("action_poweroff")).leaf = true
 end
 
 local fs = require "luci.fs"
@@ -404,7 +406,7 @@ end
 
 --Read external model database
 local function my_model_database()
-	local state = luci.sys.exec("cat /etc/model_database.txt | grep -E '^[0-9]{1,9}:' | awk -F ':' '{print $1,$2}' OFS='###' ORS='@@@' | tr ' ' '~' 2>&1")
+	local state = luci.sys.exec("cat /etc/model_database.txt | grep -E '^[0-9]{1,9}.*:' | awk -F ':' '{print $1,$2}' OFS='###' ORS='@@@' | tr ' ' '~' 2>&1")
 	return state
 end
 
@@ -440,4 +442,9 @@ function action_openwrt_author()
 	luci.http.write_json({
 		openwrt_author = openwrt_author();
 	})
+end
+
+--Shut down the router
+function action_poweroff()
+	luci.sys.exec("/sbin/poweroff")
 end

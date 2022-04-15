@@ -30,15 +30,34 @@ s = m:section(TypedSection, "smartdns", translate("Settings"), translate("Genera
 s.anonymous = true
 
 s:tab("settings", translate("General Settings"))
-s:tab("firstdns", translate("First Server Settings"))
 s:tab("seconddns", translate("Second Server Settings"))
 s:tab("custom", translate("Custom Settings"))
+
+---- Eanble
+o = s:taboption("settings", Flag, "enabled", translate("Enable"), translate("Enable or disable smartdns server"))
+o.default     = o.disabled
+o.rempty      = false
 
 ---- server name
 o = s:taboption("settings", Value, "server_name", translate("Server Name"), translate("Smartdns server name"))
 o.default     = "smartdns"
 o.datatype    = "hostname"
 o.rempty      = false
+
+---- Port
+o = s:taboption("settings", Value, "port", translate("Local Port"), translate("Smartdns local server port"))
+o.placeholder = 6053
+o.default     = 6053
+o.datatype    = "port"
+o.rempty      = false
+
+---- Enable TCP server
+o = s:taboption("settings", Flag, "tcp_server", translate("TCP Server"), translate("Enable TCP DNS Server"))
+o.rmempty     = false
+o.default     = o.enabled
+o.cfgvalue    = function(...)
+    return Flag.cfgvalue(...) or "1"
+end
 
 ---- Support IPV6
 o = s:taboption("settings", Flag, "ipv6_server", translate("IPV6 Server"), translate("Enable IPV6 DNS Server"))
@@ -64,8 +83,9 @@ o.cfgvalue    = function(...)
     return Flag.cfgvalue(...) or "0"
 end
 
----- Serve expired
-o = s:taboption("settings", Flag, "serve_expired", translate("Serve expired"), translate("Attempts to serve old responses from cache with a TTL of 0 in the response without waiting for the actual resolution to finish."))
+---- Domain Serve expired
+o = s:taboption("settings", Flag, "serve_expired", translate("Serve expired"), 
+	translate("Attempts to serve old responses from cache with a TTL of 0 in the response without waiting for the actual resolution to finish."))
 o.rmempty     = false
 o.default     = o.disabled
 o.cfgvalue    = function(...)
@@ -96,97 +116,6 @@ o.placeholder = "300"
 o.default     = 300
 o.optional    = true
 
----- first dns server
----- Eanble
-o = s:taboption("firstdns", Flag, "enabled", translate("Enable"), translate("Enable or disable smartdns server"))
-o.default     = o.disabled
-o.rempty      = false
-
----- Port
-o = s:taboption("firstdns", Value, "port", translate("Local Port"), translate("Smartdns local server port"))
-o.placeholder = 6053
-o.default     = 6053
-o.datatype    = "port"
-o.rempty      = false
-
----- Enable TCP server
-o = s:taboption("firstdns", Flag, "tcp_server", translate("TCP Server"), translate("Enable TCP DNS Server"))
-o.rmempty     = false
-o.default     = o.enabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "1"
-end
-
----- dns server group
-o = s:taboption("firstdns", Value, "firstdns_server_group", translate("Server Group"), translate("Query DNS through specific dns server group, such as office, home."))
-o.rmempty     = true
-o.placeholder = "default"
-o.datatype    = "hostname"
-o.rempty      = true
-
----- skip speed test
-o = s:taboption("firstdns", Flag, "firstdns_no_speed_check", translate("Skip Speed Check"), translate("Do not check speed."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
----- skip address rules
-o = s:taboption("firstdns", Flag, "firstdns_no_rule_addr", translate("Skip Address Rules"), translate("Skip address rules."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
----- skip name server rules
-o = s:taboption("firstdns", Flag, "firstdns_no_rule_nameserver", translate("Skip Nameserver Rule"), translate("Skip nameserver rules."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
----- skip ipset rules
-o = s:taboption("firstdns", Flag, "firstdns_no_rule_ipset", translate("Skip Ipset Rule"), translate("Skip ipset rules."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
----- skip soa address rule
-o = s:taboption("firstdns", Flag, "firstdns_no_rule_soa", translate("Skip SOA Address Rule"), translate("Skip SOA address rules."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
-o = s:taboption("firstdns", Flag, "firstdns_no_dualstack_selection", translate("Skip Dualstack Selection"), translate("Skip Dualstack Selection."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
----- skip cache
-o = s:taboption("firstdns", Flag, "firstdns_no_cache", translate("Skip Cache"), translate("Skip Cache."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
----- Force AAAA SOA
-o = s:taboption("firstdns", Flag, "firstdns_force_aaaa_soa", translate("Force AAAA SOA"), translate("Force AAAA SOA."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
 ---- second dns server
 ---- rr-ttl-max
 o = s:taboption("settings", Value, "rr_ttl_max", translate("Domain TTL Max"), translate("Maximum TTL for all domain result."))
@@ -199,8 +128,8 @@ o.rempty      = false
 
 ---- Port
 o = s:taboption("seconddns", Value, "seconddns_port", translate("Local Port"), translate("Smartdns local server port"))
-o.placeholder = 7053
-o.default     = 7053
+o.placeholder = 6553
+o.default     = 6553
 o.datatype    = "port"
 o.rempty      = false
 
@@ -219,7 +148,6 @@ o.placeholder = "default"
 o.datatype    = "hostname"
 o.rempty      = true
 
----- skip speed test
 o = s:taboption("seconddns", Flag, "seconddns_no_speed_check", translate("Skip Speed Check"), translate("Do not check speed."))
 o.rmempty     = false
 o.default     = o.disabled
@@ -316,7 +244,7 @@ s.template = "cbi/tblsection"
 s.extedit  = luci.dispatcher.build_url("admin/services/smartdns/upstream/%s")
 
 ---- enable flag
-o = s:option(Flag, "enabled", translate("Enable"))
+o = s:option(Flag, "enabled", translate("Enable"), translate("Enable"))
 o.rmempty     = false
 o.default     = o.enabled
 o.cfgvalue    = function(...)
@@ -324,15 +252,14 @@ o.cfgvalue    = function(...)
 end
 
 ---- name
-s:option(Value, "name",  translate("DNS Server Name"))
+s:option(Value, "name", translate("DNS Server Name"), translate("DNS Server Name"))
 
 ---- IP address
-o = s:option(Value, "ip", translate("DNS Server ip"))
+o = s:option(Value, "ip", translate("ip"), translate("DNS Server ip"))
 o.datatype = "or(ipaddr, string)"
-o.rmempty = false
-
+o.rmempty = false 
 ---- port
-o = s:option(Value, "port", translate("DNS Server port"))
+o = s:option(Value, "port", translate("port"), translate("DNS Server port"))
 o.placeholder = "default"
 o.datatype    = "port"
 o.rempty      = true
@@ -341,7 +268,7 @@ o:depends("type", "tcp")
 o:depends("type", "tls")
 
 ---- type
-o = s:option(ListValue, "type", translate("DNS Server type"))
+o = s:option(ListValue, "type", translate("type"), translate("DNS Server type"))
 o.placeholder = "udp"
 o:value("udp", translate("udp"))
 o:value("tcp", translate("tcp"))
@@ -350,13 +277,14 @@ o:value("https", translate("https"))
 o.default     = "udp"
 o.rempty      = false
 
--- Doman addresss
-s = m:section(TypedSection, "smartdns", translate("Domain Address"), 
-	translate("Set Specific domain ip address."))
-s.anonymous = true
+s = m:section(TypedSection, "smartdns", translate("Advanced Settings"), translate("Advanced Settings"));
+s.anonymous = true;
 
----- address
-addr = s:option(Value, "address",
+s:tab("domain-address", translate("Domain Address"), translate("Set Specific domain ip address."));
+s:tab("blackip-list", translate("IP Blacklist"), translate("Set Specific ip blacklist."));
+
+-- Doman addresss
+addr = s:taboption("domain-address", Value, "address",
 	translate(""), 
 	translate("Specify an IP address to return for any host in the given domains, Queries in the domains are never forwarded and always replied to with the specified IP address which may be IPv4 or IPv6."))
 
@@ -373,12 +301,7 @@ function addr.write(self, section, value)
 end
 
 -- IP Blacklist
-s = m:section(TypedSection, "smartdns", translate("IP Blacklist"), 
-	translate("Set Specific ip blacklist."))
-s.anonymous = true
-
----- blacklist
-addr = s:option(Value, "blacklist_ip",
+addr = s:taboption("blackip-list", Value, "blacklist_ip",
 	translate(""), 
 	translate("Configure IP blacklists that will be filtered from the results of specific DNS server."))
 
@@ -394,25 +317,26 @@ function addr.write(self, section, value)
 	nixio.fs.writefile("/etc/smartdns/blacklist-ip.conf", value)
 end
 
--- Doman addresss
--- s = m:section(TypedSection, "smartdns", translate("Technical Support"), 
--- 	translate("If you like this software, please buy me a cup of coffee."))
--- s.anonymous = true
+-- Technical Support
+s = m:section(TypedSection, "smartdns", translate("Technical Support"), 
+	translate("If you like this software, please buy me a cup of coffee."))
+s.anonymous = true
 
--- o = s:option(Button, "web")
--- o.title = translate("SmartDNS official website")
--- o.inputtitle = translate("open website")
--- o.inputstyle = "apply"
--- o.write = function()
--- 	luci.http.redirect("https://pymumu.github.io/smartdns")
--- end
+o = s:option(Button, "web")
+o.title = translate("SmartDNS official website")
+o.inputtitle = translate("open website")
+o.inputstyle = "apply"
+o.write = function()
+	luci.http.redirect("https://pymumu.github.io/smartdns")
+end
 
--- o = s:option(Button, "Donate")
--- o.title = translate("Donate to smartdns")
--- o.inputtitle = translate("Donate")
--- o.inputstyle = "apply"
--- o.write = function()
--- 	luci.http.redirect("https://pymumu.github.io/smartdns/#donate")
--- end
+o = s:option(Button, "Donate")
+o.title = translate("Donate to smartdns")
+o.inputtitle = translate("Donate")
+o.inputstyle = "apply"
+o.write = function()
+	luci.http.redirect("https://pymumu.github.io/smartdns/#donate")
+end
 
 return m
+
