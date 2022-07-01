@@ -1,15 +1,15 @@
 --Remove the spaces in the string
 function trim(str)
-   --return (string.gsub(str, "^%s*(.-)%s*$", "%1"))
-   return (string.gsub(str, "%s+", ""))
+	--return (string.gsub(str, "^%s*(.-)%s*$", "%1"))
+	return (string.gsub(str, "%s+", ""))
 end
 
 --Auto-complete node
 local check_config_amlogic = luci.sys.exec("uci get amlogic.@amlogic[0].amlogic_firmware_repo 2>/dev/null") or ""
 if (trim(check_config_amlogic) == "") then
-    luci.sys.exec("uci delete amlogic.@amlogic[0] 2>/dev/null")
-    luci.sys.exec("uci set amlogic.config='amlogic' 2>/dev/null")
-    luci.sys.exec("uci commit amlogic 2>/dev/null")
+	luci.sys.exec("uci delete amlogic.@amlogic[0] 2>/dev/null")
+	luci.sys.exec("uci set amlogic.config='amlogic' 2>/dev/null")
+	luci.sys.exec("uci commit amlogic 2>/dev/null")
 end
 
 b = Map("amlogic")
@@ -24,7 +24,9 @@ o.anonymouse = true
 --1.Set OpenWrt Firmware Repository
 mydevice = o:option(DummyValue, "mydevice", translate("Current Device:"))
 mydevice.description = translate("If the current device shows (Unknown device), please report to github.")
-mydevice.default = luci.sys.exec("cat /proc/device-tree/model | tr -d \'\\000\'") or "Unknown device"
+mydevice_platfrom = trim(luci.sys.exec("cat /etc/flippy-openwrt-release 2>/dev/null | grep PLATFORM | awk -F'=' '{print $2}' | grep -oE '(amlogic|rockchip|allwinner)'")) or "Unknown PLATFORM"
+mydevice_name = trim(luci.sys.exec("cat /proc/device-tree/model | tr -d \'\\000\'")) or "Unknown device"
+mydevice.default = mydevice_name .. " (" .. mydevice_platfrom .. ")"
 mydevice.rmempty = false
 
 --2.Set OpenWrt Firmware Repository
@@ -62,6 +64,8 @@ kernel_branch:value("5.4", translate("5.4"))
 kernel_branch:value("5.10", translate("5.10"))
 kernel_branch:value("5.15", translate("5.15"))
 kernel_branch:value("5.16", translate("5.16"))
+kernel_branch:value("5.17", translate("5.17"))
+kernel_branch:value("5.18", translate("5.18"))
 local default_kernel_branch = luci.sys.exec("ls /lib/modules/ 2>/dev/null | grep -oE '^[1-9].[0-9]{1,3}'")
 kernel_branch.default = trim(default_kernel_branch)
 kernel_branch.rmempty = false

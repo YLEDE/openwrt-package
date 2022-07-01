@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=quickjspp
-PKG_RELEASE:=31
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/ftk/quickjspp.git
-PKG_SOURCE_DATE:=2021-11-30
-PKG_SOURCE_VERSION:=dcfe28cab7805c22a172dc5bd0d4aad353ea3fc9
-PKG_MIRROR_HASH:=skip
+PKG_SOURCE_DATE:=2021-04-13
+PKG_SOURCE_VERSION:=25037f37a02277ed8a8a0f4d61bac174254bf7b6
+PKG_MIRROR_HASH:=6a914acdaf31c2ed0adef3f36646105df4333355dd7c254d9590b0c11fee469e
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
@@ -27,7 +27,7 @@ define Package/quickjspp
   URL:=https://github.com/ftk/quickjspp
   TITLE:=QuickJS wrapper for C++
   DEPENDS:=+libatomic +libpthread
-  BUILDONLY:=1
+  PROVIDES:=quickjs
 endef
 
 define Package/quickjspp/description
@@ -35,9 +35,12 @@ define Package/quickjspp/description
   Javascript engine into your program.
 endef
 
-CMAKE_OPTIONS += \
-	-DBUILD_TESTING=OFF \
-	-DCMAKE_EXE_LINKER_FLAGS="-latomic" \
-	-DCMAKE_REQUIRED_LIBRARIES=stdc++fs
+define Build/Install
+	$(INSTALL_DIR) $(PKG_INSTALL_DIR)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/quickjs/libquickjs.a $(PKG_INSTALL_DIR)/usr/lib/
+	$(INSTALL_DIR) $(PKG_INSTALL_DIR)/usr/include/quickjs/
+	$(CP) $(PKG_BUILD_DIR)/quickjspp.hpp $(PKG_INSTALL_DIR)/usr/include/
+	$(CP) $(PKG_BUILD_DIR)/quickjs/quickjs*.h $(PKG_INSTALL_DIR)/usr/include/quickjs/
+endef
 
 $(eval $(call BuildPackage,quickjspp))

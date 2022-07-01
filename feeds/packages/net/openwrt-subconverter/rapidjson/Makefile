@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rapidjson
-PKG_RELEASE:=24
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/Tencent/rapidjson.git
 PKG_SOURCE_DATE:=2021-08-13
-PKG_SOURCE_VERSION:=e4bde977440d4a00f820b6586899e48a972d2493
-PKG_MIRROR_HASH:=skip
+PKG_SOURCE_VERSION:=00dbcf2c6e03c47d6c399338b6de060c71356464
+PKG_MIRROR_HASH:=9c600748a8e6151341dd92be628f0a21263763e588b6d1c87dc834679da0714a
 
 PKG_LICENSE:=BSD 3-Clause
 PKG_LICENSE_FILES:=LICENSE
@@ -32,7 +32,6 @@ define Package/rapidjson
   CATEGORY:=Libraries
   URL:=https://github.com/Tencent/rapidjson
   TITLE:=rapidjson JSON parser/generator for C++
-  BUILDONLY:=1
 endef
 
 define Package/rapidjson/description
