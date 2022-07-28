@@ -5,15 +5,10 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for Wakeup-On-Lan-plus
+LUCI_TITLE:=LuCI support for wolplus From sundaqiang
 LUCI_DEPENDS:=+etherwake
 LUCI_PKGARCH:=all
-PKG_VERSION:=1.0.2
-PKG_RELEASE:=1
-
-PKG_MAINTAINER:=siwind
-PKG_LICENSE:=MIT
-PKG_LICENSE_FILES:=LICENSE
+PKG_MAINTAINER:=sundaqiang
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
