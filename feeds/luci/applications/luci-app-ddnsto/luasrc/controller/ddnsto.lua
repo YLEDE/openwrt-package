@@ -30,6 +30,18 @@ local function trim(input)
     return (string.gsub(input, "^%s*(.-)%s*$", "%1"))
 end
 
+local function ddnsto_removelog() 
+    local fs   = require "nixio.fs"
+    fs.remove("/tmp/ddnsto/ddnsto-luci.log")
+end
+
+local function ddnsto_writelog(content) 
+    local fs   = require "nixio.fs"
+    content = content .."XU6J03M6"
+    fs.mkdirr("/tmp/ddnsto/")
+    fs.writefile("/tmp/ddnsto/ddnsto-luci.log",content)
+end
+
 
 local function get_data() 
     local uci  = require "luci.model.uci".cursor()
@@ -283,12 +295,14 @@ function ddnsto_form()
             scope = scope,
             success = success,
             result = result,
-    } 
+    }
+    ddnsto_removelog()
     luci.http.prepare_content("application/json")
     luci.http.write_json(response)
 end
  
 function ddnsto_submit()
+    ddnsto_removelog()
     local http = require "luci.http"
     local content = http.content()
 
@@ -404,9 +418,11 @@ function ddnsto_submit()
     if success == 0 then     
         log = log .. "正在保存参数...\n"
         log = log .. "保存成功!\n"
-        log = log .. "请关闭对话框\n" 
+        log = log .. "请关闭对话框\n"
+        ddnsto_writelog(log)
         
-        luci.util.exec("/etc/init.d/ddnsto stop") 
+        luci.util.exec("/etc/init.d/ddnsto stop")
+        luci.util.exec("sleep 1")
         luci.util.exec("/etc/init.d/ddnsto start")
         luci.util.exec("sleep 1")
     else
@@ -415,19 +431,19 @@ function ddnsto_submit()
         log = log .. error .."\n"
         log = log .. "\n"
         log = log .. "保存失败！\n"
-        log = log .. "请关闭对话框\n" 
+        log = log .. "请关闭对话框\n"
+        ddnsto_writelog(log) 
         luci.util.exec("sleep 1")
     end
  
     
     local result = {
-        async = false,
-        log = log,
         data = get_data(),
         schema = get_schema()
     } 
     local response = {
-        success = 0,
+        success = success,
+        error = error,
         result = result,
     } 
     http.prepare_content("application/json")

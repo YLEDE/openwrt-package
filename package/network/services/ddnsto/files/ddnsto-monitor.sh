@@ -12,7 +12,7 @@ do
 done
 
 if [ -z "${TOKEN}" ]; then
-  logger "ddnsto: the token is empty, get token from https://www.ddnsto.com/ "
+  echo "the token is empty, get token from https://www.ddnsto.com/ "
   exit 2
 fi
 
@@ -20,7 +20,6 @@ echo "ddnsto version device_id is is:"
 /usr/sbin/ddnsto -u ${TOKEN} -w
 
 _term() {
-  logger "ddnsto: SIGTERM"
   killall ddnsto 2>/dev/null
   killall ddwebdav 2>/dev/null
 
@@ -34,14 +33,14 @@ trap "_term;" SIGTERM
 
 while true ; do
   if ! pidof "ddnsto" > /dev/null ; then
-    logger "ddnsto try running"
+    echo "ddnsto try running"
     /usr/sbin/ddnsto -u ${TOKEN} -x ${DEVICE_IDX} &
     PID=$!
     wait $PID
     RET=$?
-    logger "ddnsto EXIT CODE: ${RET}"
+    echo "EXIT CODE: ${RET}"
     if [ "${RET}" == "100" ]; then
-      logger "ddnsto token error, please set a correct token from https://www.ddnsto.com/ "
+      echo "token error, please set a correct token from https://www.ddnsto.com/ "
       exit 100
     fi
   fi
